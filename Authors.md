@@ -10,8 +10,7 @@ For organizations:
 
 
 ```
-Cycling '74 <*@cycling74.com>
-David Butler <david@theimpersonalstereo.com>
+Christopher Poovey <christopherpoovey@gmail.com>
 ```
 
 
