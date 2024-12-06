@@ -14,6 +14,19 @@
 		"gridsize" : [ 15.0, 15.0 ],
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-5",
+					"linecount" : 2,
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 17.0, 374.0, 121.0, 36.0 ],
+					"text" : "-102.466438 1.022964 -0."
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-57",
 					"maxclass" : "comment",
 					"numinlets" : 1,
@@ -42,8 +55,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 181.0, 370.0, 184.0, 22.0 ],
-					"text" : "jit.anim.node @rotatexyz 90 0 90"
+					"patching_rect" : [ 211.0, 374.0, 197.0, 22.0 ],
+					"text" : "jit.anim.node @rotatexyz 90 180 90"
 				}
 
 			}
@@ -67,7 +80,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"patching_rect" : [ 181.0, 458.0, 191.0, 22.0 ],
-					"text" : "jit.anim.node @rotatexyz 180 90 0"
+					"text" : "jit.anim.node @rotatexyz 0 90 180"
 				}
 
 			}
@@ -90,7 +103,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 193.0, 319.0, 99.0, 22.0 ],
+					"patching_rect" : [ 251.5, 319.0, 99.0, 22.0 ],
 					"text" : "quat $1 $2 $3 $4"
 				}
 
@@ -192,7 +205,7 @@
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
 					"patching_rect" : [ 119.0, 277.0, 284.0, 22.0 ],
-					"text" : "sensor_fusion @convention 1 @gyroscopeScale 50"
+					"text" : "sensor_fusion @convention 1 @gyroscopeScale 57"
 				}
 
 			}
@@ -201,6 +214,13 @@
 				"patchline" : 				{
 					"destination" : [ "obj-26", 0 ],
 					"source" : [ "obj-1", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-5", 1 ],
+					"source" : [ "obj-1", 0 ]
 				}
 
 			}
