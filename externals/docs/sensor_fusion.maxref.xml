@@ -47,13 +47,13 @@
 	<attributelist>
 
 		<attribute name='accelRejection' get='1' set='1' type='float64' size='1' >
-			<digest>Threshold (in degrees) used by the acceleration rejection feature</digest>
-			<description>Threshold (in degrees) used by the acceleration rejection feature. A value of zero will disable this feature. A value of 10 degrees is appropriate for most applications. </description>
+			<digest> Threshold (in degrees) used by the acceleration rejection feature</digest>
+			<description> Threshold (in degrees) used by the acceleration rejection feature. A value of zero will disable this feature. A value of 10 degrees is appropriate for most applications. </description>
 		</attribute>
 
 		<attribute name='convention' get='1' set='1' type='long' size='1' >
-			<digest>The orientation of the sensor in the device </digest>
-			<description>The orientation of the sensor in the device </description>
+			<digest></digest>
+			<description></description>
 		</attribute>
 
 		<attribute name='gain' get='1' set='1' type='float64' size='1' >
