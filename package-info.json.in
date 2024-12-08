@@ -1,9 +1,9 @@
 {
-	"author" : "Cycling '74",
-	"description" : "Lightweight reference implementation of a package built using the Min-API.",
-	"homepatcher" : "C++ Object Development Kit.maxpat",
+	"author" : "Christopher Poovey",
+	"description" : "This repo is a Max external wrapping xioTechnologies Fusion library. In short, sensor fusion allows you to take raw IMU data and determine orientation and position. Fusion implements the Madgwick algorithm which allows for up to 9DOF tracking by providing the orientation of the tracked object as well as the acceleration of the earth in relation to the tracked object.",
+	"homepatcher" : "",
 	"max_version_min" : "8.0", "max_version_max" : "none",
-	"name" : "@C74_PACKAGE_NAME@",
+	"name" : "Sensor Fusion",
 	"os" : {
 		"macintosh" : {
 			"platform" : [ "x64", "aarch64" ],
@@ -15,10 +15,8 @@
 		}
 	},
 	"package_extra" : {
-		"reverse_domain" : "com.cycling74",
-		"copyright" : "Copyright (c) 2018 Cycling '74"
+		"copyright" : "Copyright (c) 2024 Christopher Poovey"
 	},
-	"tags" : [ ],
-	"version" : "@GIT_VERSION_MAJ@.@GIT_VERSION_MIN@.@GIT_VERSION_SUB@",
-	"website" : "http://www.github.com/Cycling74/min-devkit"
+	"tags" : ["Sensor Fusion", "IMU"],
+	"website" : "https://github.com/composingcap/max-sensor-fusion/"
 }
