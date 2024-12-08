@@ -575,8 +575,8 @@
 					"numinlets" : 3,
 					"numoutlets" : 5,
 					"outlettype" : [ "list", "list", "list", "dictionary", "float" ],
-					"patching_rect" : [ 35.0, 358.0, 284.0, 22.0 ],
-					"text" : "sensor_fusion @convention 1 @gyroscopeScale 57"
+					"patching_rect" : [ 35.0, 358.0, 286.0, 22.0 ],
+					"text" : "sensor_fusion @convention 1 @gyroscopeFormat 1"
 				}
 
 			}
@@ -599,7 +599,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-22", 0 ],
-					"midpoints" : [ 110.75, 388.0, 279.5, 388.0 ],
+					"midpoints" : [ 111.25, 388.0, 279.5, 388.0 ],
 					"order" : 0,
 					"source" : [ "obj-1", 1 ]
 				}

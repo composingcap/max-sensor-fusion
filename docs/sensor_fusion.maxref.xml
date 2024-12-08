@@ -66,9 +66,9 @@
 			<description>Gyroscope range (in degrees per second). Angular rate recovery will activate if the gyroscope measurement exceeds 98% of this value. A value of zero will disable this feature. The value should be set to the range specified in the gyroscope datasheet. </description>
 		</attribute>
 
-		<attribute name='gyroscopeScale' get='1' set='1' type='float64' size='1' >
-			<digest></digest>
-			<description></description>
+		<attribute name='gyroscopeFormat' get='1' set='1' type='long' size='1' >
+			<digest>input format for the gyroscope </digest>
+			<description>input format for the gyroscope </description>
 		</attribute>
 
 		<attribute name='magRejection' get='1' set='1' type='float64' size='1' >

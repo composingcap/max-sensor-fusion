@@ -25,7 +25,7 @@ private:
 	FusionVector mag_data{0.0f, 0.0f, 0.0f};
 	const FusionMatrix softIronMatrix = {1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
 	const FusionVector hardIronOffset = {0.0f, 0.0f, 0.0f};
-
+	double gyro_scale = 1;
 	FusionOffset offset{};
 	FusionAhrs ahrs_{};
 	FusionAhrsSettings settings_{
@@ -46,10 +46,10 @@ private:
 		.recoveryTriggerPeriod = 0,
 	};
 
+	double time_step_seconds = -1.0;
 
 	dict dump_dict_{symbol(true)};
 
-	mutex guard_;
 	std::chrono::time_point<std::chrono::steady_clock> last_time;
 
 	void apply_settings()
@@ -78,16 +78,18 @@ public:
 		enum_count
 	};
 
-	~sensor_fusion()
-	{
-		std::lock_guard<mutex> lock(guard_);
-	}
-
 	enum_map imuconvention_range = {"East_North_Up", "North_East_Down", "North_West_Up"};
+
+	enum class gyro_format : int { Degrees, Radians, Phase, enum_count };
+
+	enum_map gyro_format_range = {"Degrees", "Radians", "Phase"};
+
 
 	inlet<> gyro{this, "(list) gyroscope xyz", "list"};
 	inlet<> accel{this, "(list) accelerometer xyz", "list"};
-	inlet<> mag{this, "(list)magnetometer xyz", "list"};
+	inlet<> mag{this, "(optional) (list) magnetometer xyz", "list"};
+	inlet<> ts{this, "(optional) (float) time step ms", "float"};
+
 
 	outlet<> euler{this, "(list) euler rotation", "list"};
 	outlet<> quat{this, "(list) quaternion rotation", "list"};
@@ -139,8 +141,28 @@ public:
 		}
 	};
 
-	attribute<number> a_gyroscale{
-		this, "gyroscopeScale", 1, description{"a scalar applied to the gyroscope data before processing"}
+	attribute<gyro_format> a_gyro_format{
+		this, "gyroscopeFormat", gyro_format::Degrees, gyro_format_range,
+		setter{
+			[this](const c74::min::atoms& args, const int inlet)
+			{
+				switch (static_cast<gyro_format>(args[0]))
+				{
+				case gyro_format::Degrees:
+					gyro_scale = 1.0;
+					break;
+				case gyro_format::Radians:
+					gyro_scale = 360.0 / TWOPI;
+					break;
+				case gyro_format::Phase:
+					gyro_scale = 360;
+					break;
+				}
+
+				return args;
+			}
+		},
+		description{"input format for the gyroscope"},
 	};
 
 	attribute<bool> a_use_mag{this, "useMagnetometer", false, description{"enable if your device has a magnetometer"}};
@@ -148,7 +170,12 @@ public:
 	message<> list{
 		this, "list", "accelerometer data", [this](const c74::min::atoms& args, const int inlet) -> c74::min::atoms
 		{
-			//std::lock_guard<mutex> lock(guard_);
+			if (inlet == 3)
+			{
+				time_step_seconds = static_cast<double>(args[0]);
+			}
+
+
 			if (args.size() < 3)
 				return {};
 
@@ -169,15 +196,19 @@ public:
 			if (inlet != 0)
 				return {};
 
-			gyro_data.array[0] = static_cast<float>(args[0]) * a_gyroscale;
-			gyro_data.array[1] = static_cast<float>(args[1]) * a_gyroscale;
-			gyro_data.array[2] = static_cast<float>(args[2]) * a_gyroscale;
+			gyro_data.array[0] = static_cast<float>(args[0]) * gyro_scale;
+			gyro_data.array[1] = static_cast<float>(args[1]) * gyro_scale;
+			gyro_data.array[2] = static_cast<float>(args[2]) * gyro_scale;
 
 			auto now = std::chrono::high_resolution_clock::now();
-
-			auto duration = std::chrono::duration<float, std::chrono::seconds::period>(now - last_time).count();
+			if (time_step_seconds < 0)
+			{
+				time_step_seconds = std::chrono::duration<double, std::chrono::seconds::period>(now - last_time).
+					count();
+			}
 			last_time = now;
-			if (duration > 2) return {};
+			if (time_step_seconds > 2)
+				return {};
 			gyro_data = FusionCalibrationInertial(gyro_data, gyroscopeMisalignment, gyroscopeSensitivity,
 			                                      gyroscopeOffset);
 			gyro_data = FusionOffsetUpdate(&offset, gyro_data);
@@ -188,20 +219,21 @@ public:
 			if (a_use_mag)
 			{
 				mag_data = FusionCalibrationMagnetic(mag_data, softIronMatrix, hardIronOffset);
-				FusionAhrsUpdate(&ahrs_, gyro_data, accel_data_, mag_data, duration);
+				FusionAhrsUpdate(&ahrs_, gyro_data, accel_data_, mag_data, time_step_seconds);
 			}
-			else FusionAhrsUpdateNoMagnetometer(&ahrs_, gyro_data, accel_data_, duration);
+			else
+				FusionAhrsUpdateNoMagnetometer(&ahrs_, gyro_data, accel_data_, time_step_seconds);
 
 			const auto quat_data = FusionAhrsGetQuaternion(&ahrs_);
 			const FusionEuler euler_data = FusionQuaternionToEuler(quat_data);
 			const FusionVector earth_data = FusionAhrsGetEarthAcceleration(&ahrs_);
 
 
-			time_step.send(duration * 1000.0f);
+			time_step.send(time_step_seconds * 1000.0f);
 			earth.send(atoms(std::begin(earth_data.array), std::end(earth_data.array)));
 			quat.send(atoms(std::begin(quat_data.array), std::end(quat_data.array)));
 			euler.send(atoms(std::begin(euler_data.array), std::end(euler_data.array)));
-
+			time_step_seconds = -1.0;
 
 			return {};
 		}
